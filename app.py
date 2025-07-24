@@ -153,13 +153,35 @@ pvalue_input = st.sidebar.selectbox(
     """
 )
 
+st.sidebar.header("🏦 Budget Constraints")
+
+enable_budget_cap = st.sidebar.checkbox(
+    "Enable Budget Cap",
+    value=True,
+    help="Limit the maximum spend multiplier for business practicality"
+)
+
+if enable_budget_cap:
+    max_multiplier = st.sidebar.slider(
+        "Maximum Spend Multiplier",
+        min_value=1.5,
+        max_value=20.0,
+        value=5.0,
+        step=0.5,
+        help="Cap the spend multiplier at this level regardless of statistical requirements"
+    )
+else:
+    max_multiplier = None
+    st.sidebar.info("⚠️ No budget cap - statistical requirements may generate very high multipliers")
+
 # Calculation
-def calculate_budget(spend, cpa, mde, power, weeks, significance=0.05):
+def calculate_budget(spend, cpa, mde, power, weeks, significance=0.05, max_multiplier=None):
     """
     Practical incrementality testing budget calculator.
     
     Now properly factors in Cost Per Acquisition (CPA) to determine required budget.
     Higher CPA = need more budget to generate same statistical signal.
+    Optional max_multiplier caps the spend multiplier for business practicality.
     """
     
     weekly_spend = spend / 4.33
@@ -193,14 +215,17 @@ def calculate_budget(spend, cpa, mde, power, weeks, significance=0.05):
     required_budget = total_conversions_needed * cpa
     calculated_multiplier = required_budget / normal_budget if normal_budget > 0 else 2.0
     
-    # Cap at 5x for business practicality, but allow statistical requirements to drive
-    if calculated_multiplier <= 5.0:
+    # Apply budget cap if enabled
+    if max_multiplier is not None and calculated_multiplier > max_multiplier:
+        # If statistical requirement exceeds cap, limit but note the constraint
+        multiplier = max_multiplier
+        total_budget = normal_budget * multiplier
+        is_capped = True
+    else:
+        # Use full statistical requirement
         total_budget = required_budget
         multiplier = calculated_multiplier
-    else:
-        # If statistical requirement exceeds 5x, cap but note the limitation
-        multiplier = 5.0
-        total_budget = normal_budget * multiplier
+        is_capped = False
     
     incremental_budget = total_budget - normal_budget
     total_conversions_observed = total_budget / cpa if cpa > 0 else 0
@@ -213,6 +238,8 @@ def calculate_budget(spend, cpa, mde, power, weeks, significance=0.05):
         'conversions': total_conversions_observed,
         'baseline_conversions': baseline_conversions,
         'total_conversions_needed': total_conversions_needed,
+        'is_capped': is_capped,
+        'statistical_multiplier': calculated_multiplier,
         'mde_category': 'Very Small' if mde <= 5 else 'Small' if mde <= 10 else 'Moderate' if mde <= 15 else 'Large' if mde <= 20 else 'Very Large'
     }
 
@@ -221,13 +248,13 @@ def calculate_budget(spend, cpa, mde, power, weeks, significance=0.05):
 power_decimal = power_input / 100
 
 # User's custom configuration
-custom = calculate_budget(monthly_spend, cpa, mde_input, power_decimal, duration, pvalue_input)
+custom = calculate_budget(monthly_spend, cpa, mde_input, power_decimal, duration, pvalue_input, max_multiplier)
 
 # Pre-defined scenarios for comparison
 scenarios = {
-    'high': calculate_budget(monthly_spend, cpa, 10, 0.90, duration, 0.05),  # 10% MDE, 90% power, 5% sig
-    'medium': calculate_budget(monthly_spend, cpa, 15, 0.80, duration, 0.05), # 15% MDE, 80% power, 5% sig
-    'low': calculate_budget(monthly_spend, cpa, 20, 0.70, duration, 0.05)    # 20% MDE, 70% power, 5% sig
+    'high': calculate_budget(monthly_spend, cpa, 10, 0.90, duration, 0.05, max_multiplier),  # 10% MDE, 90% power, 5% sig
+    'medium': calculate_budget(monthly_spend, cpa, 15, 0.80, duration, 0.05, max_multiplier), # 15% MDE, 80% power, 5% sig
+    'low': calculate_budget(monthly_spend, cpa, 20, 0.70, duration, 0.05, max_multiplier)    # 20% MDE, 70% power, 5% sig
 }
 
 # Display header
@@ -280,9 +307,12 @@ with diag_col3:
     st.caption("Driven by your statistical parameters")
 
 with diag_col4:
-    if custom['multiplier'] >= 5.0:
-        st.metric("⚠️ Capped at 5x", "Statistical requirement higher")
-        st.caption("True requirement would exceed business limits")
+    if custom.get('is_capped', False):
+        st.metric("⚠️ Budget Capped", f"True: {custom['statistical_multiplier']:.1f}x")
+        st.caption(f"Capped at {custom['multiplier']:.1f}x - statistical requirement higher")
+    elif max_multiplier is None:
+        st.metric("🔥 Uncapped", f"{custom['multiplier']:.1f}x")
+        st.caption("Full statistical requirement applied")
     else:
         feasibility = "HIGH" if custom['multiplier'] <= 3 else "MEDIUM" if custom['multiplier'] <= 4 else "LOW"
         feasibility_emoji = "🟢" if feasibility == "HIGH" else "🟡" if feasibility == "MEDIUM" else "🔴"
