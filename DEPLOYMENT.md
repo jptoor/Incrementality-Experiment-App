@@ -43,9 +43,10 @@
    - MDE: 20%, Power: 80%, P-Value: 0.05
 
 3. **Expected result should show:**
-   - Reasonable multipliers (1.5-5x range)
-   - Proper budget calculations
+   - Statistical parameters (power/p-value) now impact results
+   - Budget cap toggle working (enable/disable, adjustable multiplier)
    - Clean formatting without broken asterisks
+   - Proper indication when results are capped vs uncapped
 
 ## Troubleshooting
 
@@ -62,11 +63,12 @@
 ## App Features
 
 ✅ **Working Features:**
-- Industry-standard budget multipliers (1.5-5x)
+- Statistical parameters (MDE, Power, P-Value) properly impact calculations
+- Configurable budget cap toggle (enable/disable, adjustable 1.5x-20x)
 - CPA properly impacts calculations
-- Cross-channel interaction disclaimers
-- Statistical parameter adjustments
+- Cross-channel interaction disclaimers and proper sourcing
 - Multiple confidence level scenarios
 - Clean formatting and professional UI
+- Transparency when results are capped vs uncapped
 
 ✅ **Ready for Production Use**
