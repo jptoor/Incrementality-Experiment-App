@@ -189,19 +189,18 @@ def calculate_budget(spend, cpa, mde, power, weeks, significance=0.05):
     total_conversions_needed = min_conversions_needed * power_adjustment * sig_adjustment
     
     # Calculate required budget based on conversions needed
-    # If baseline already meets requirement, use industry multiplier
-    if baseline_conversions >= total_conversions_needed:
-        # Use standard multiplier approach when baseline is sufficient
-        multiplier = max(1.5, min(3.0, 2.0 * power_adjustment * sig_adjustment))
-        total_budget = normal_budget * multiplier
+    # Always use the statistical requirement, not arbitrary multipliers
+    required_budget = total_conversions_needed * cpa
+    calculated_multiplier = required_budget / normal_budget if normal_budget > 0 else 2.0
+    
+    # Cap at 5x for business practicality, but allow statistical requirements to drive
+    if calculated_multiplier <= 5.0:
+        total_budget = required_budget
+        multiplier = calculated_multiplier
     else:
-        # Calculate budget needed to reach required conversions
-        total_budget = total_conversions_needed * cpa
-        multiplier = total_budget / normal_budget if normal_budget > 0 else 2.0
-        # Cap at 5x for practicality
-        if multiplier > 5.0:
-            multiplier = 5.0
-            total_budget = normal_budget * multiplier
+        # If statistical requirement exceeds 5x, cap but note the limitation
+        multiplier = 5.0
+        total_budget = normal_budget * multiplier
     
     incremental_budget = total_budget - normal_budget
     total_conversions_observed = total_budget / cpa if cpa > 0 else 0
@@ -269,22 +268,26 @@ st.caption("Industry-standard approach using practical multipliers")
 diag_col1, diag_col2, diag_col3, diag_col4 = st.columns(4)
 
 with diag_col1:
+    st.metric("Conversions Needed", f"{int(custom.get('total_conversions_needed', 0)):,}")
+    st.caption("Statistical requirement based on MDE/Power/P-value")
+
+with diag_col2:
     st.metric("Baseline Conversions", f"{int(custom.get('baseline_conversions', 0)):,}")
     st.caption("Expected conversions at normal spend")
 
-with diag_col2:
-    st.metric("MDE Category", custom.get('mde_category', 'Unknown'))
-    st.caption(f"{mde_input}% minimum detectable effect")
-
 with diag_col3:
-    st.metric("Industry Multiplier", f"{custom['multiplier']:.1f}x")
-    st.caption("Practical incrementality range: 1.5-5x")
+    st.metric("Statistical Multiplier", f"{custom['multiplier']:.1f}x")
+    st.caption("Driven by your statistical parameters")
 
 with diag_col4:
-    feasibility = "HIGH" if custom['multiplier'] <= 3 else "MEDIUM" if custom['multiplier'] <= 4 else "LOW"
-    feasibility_emoji = "🟢" if feasibility == "HIGH" else "🟡" if feasibility == "MEDIUM" else "🔴"
-    st.metric("Feasibility", f"{feasibility_emoji} {feasibility}")
-    st.caption("Budget practicality assessment")
+    if custom['multiplier'] >= 5.0:
+        st.metric("⚠️ Capped at 5x", "Statistical requirement higher")
+        st.caption("True requirement would exceed business limits")
+    else:
+        feasibility = "HIGH" if custom['multiplier'] <= 3 else "MEDIUM" if custom['multiplier'] <= 4 else "LOW"
+        feasibility_emoji = "🟢" if feasibility == "HIGH" else "🟡" if feasibility == "MEDIUM" else "🔴"
+        st.metric("Feasibility", f"{feasibility_emoji} {feasibility}")
+        st.caption("Budget practicality assessment")
 
 # Measurable Impact Section
 st.markdown("---")
@@ -439,6 +442,7 @@ with st.expander("📐 Mathematical Methodology & Formulas"):
     - **MDE Category**: {custom.get('mde_category', 'Unknown')} ({mde_input}% effect)
     - **Power Adjustment**: {0.5 + (power_input/100 * 0.5):.2f} (based on {power_input}% power)
     - **Significance Adjustment**: {0.05/pvalue_input:.2f} (based on p<{pvalue_input})
+    - **Combined Effect**: {(0.5 + (power_input/100 * 0.5)) * (0.05/pvalue_input):.2f}x multiplier on base conversions needed
     
     ### 3. Budget Calculation
     **Normal Budget** = ${monthly_spend:,}/month × {duration} weeks ÷ 4.33 = ${monthly_spend * duration / 4.33:,.0f}
