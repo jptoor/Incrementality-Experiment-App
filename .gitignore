@@ -252,7 +252,7 @@ __marimo__/
 =======
 >>>>>>> 99c7096 (Initial commit: Incrementality Test Budget Calculator)
 # Streamlit
-.streamlit/
+.streamlit/secrets.toml
 *_cache.pkl
 
 # macOS
