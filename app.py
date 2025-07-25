@@ -472,7 +472,6 @@ with st.expander("📐 Mathematical Methodology & Formulas"):
     - **MDE Category**: {custom.get('mde_category', 'Unknown')} ({mde_input}% effect)
     - **Power Adjustment**: {0.5 + (power_input/100 * 0.5):.2f} (based on {power_input}% power)
     - **Significance Adjustment**: {0.05/pvalue_input:.2f} (based on p<{pvalue_input})
-    - **Combined Effect**: {(0.5 + (power_input/100 * 0.5)) * (0.05/pvalue_input):.2f}x multiplier on base conversions needed
     
     ### 3. Budget Calculation
     **Normal Budget** = ${monthly_spend:,}/month × {duration} weeks ÷ 4.33 = ${monthly_spend * duration / 4.33:,.0f}
