@@ -241,8 +241,8 @@ custom = calculate_budget(monthly_spend, cpa, mde_input, power_decimal, duration
 # Pre-defined scenarios for comparison
 scenarios = {
     'high': calculate_budget(monthly_spend, cpa, 10, 0.90, duration, 0.05, max_multiplier),  # 10% MDE, 90% power, 5% sig
-    'medium': calculate_budget(monthly_spend, cpa, 10, 0.80, duration, 0.05, max_multiplier), # 10% MDE, 80% power, 5% sig
-    'low': calculate_budget(monthly_spend, cpa, 15, 0.70, duration, 0.05, max_multiplier)    # 15% MDE, 70% power, 5% sig
+    'medium': calculate_budget(monthly_spend, cpa, 10, 0.80, duration, 0.10, max_multiplier), # 10% MDE, 80% power, 10% sig
+    'low': calculate_budget(monthly_spend, cpa, 15, 0.70, duration, 0.10, max_multiplier)    # 15% MDE, 70% power, 10% sig
 }
 
 # Display header
@@ -374,7 +374,7 @@ with col1:
 with col2:
     st.info("📊 **Medium Confidence**")
     st.markdown(f"""
-    **Settings:** 10% MDE • 80% Power • p<0.05
+    **Settings:** 10% MDE • 80% Power • p<0.10
     
     **Incremental Budget:** {med_inc}  
 
@@ -390,7 +390,7 @@ with col2:
 with col3:
     st.info("📊 **Low Confidence**")
     st.markdown(f"""
-    **Settings:** 15% MDE • 70% Power • p<0.05
+    **Settings:** 15% MDE • 70% Power • p<0.10
     
     **Incremental Budget:** {low_inc}  
 
