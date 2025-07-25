@@ -1,12 +1,18 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 <<<<<<< HEAD
+<<<<<<< HEAD
 *.py[codz]
 *$py.class
 
 # C extensions
 *.so
 
+=======
+*.py[cod]
+*$py.class
+
+>>>>>>> 99c7096 (Initial commit: Incrementality Test Budget Calculator)
 =======
 *.py[cod]
 *$py.class
@@ -27,6 +33,10 @@ sdist/
 var/
 wheels/
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+pip-wheel-metadata/
+>>>>>>> 99c7096 (Initial commit: Incrementality Test Budget Calculator)
 =======
 pip-wheel-metadata/
 >>>>>>> 99c7096 (Initial commit: Incrementality Test Budget Calculator)
@@ -38,8 +48,11 @@ MANIFEST
 
 # PyInstaller
 <<<<<<< HEAD
+<<<<<<< HEAD
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
+=======
+>>>>>>> 99c7096 (Initial commit: Incrementality Test Budget Calculator)
 =======
 >>>>>>> 99c7096 (Initial commit: Incrementality Test Budget Calculator)
 *.manifest
@@ -59,6 +72,7 @@ htmlcov/
 nosetests.xml
 coverage.xml
 *.cover
+<<<<<<< HEAD
 <<<<<<< HEAD
 *.py.cover
 .hypothesis/
@@ -152,12 +166,17 @@ celerybeat.pid
 .env
 .envrc
 =======
+=======
+>>>>>>> 99c7096 (Initial commit: Incrementality Test Budget Calculator)
 *.py,cover
 .hypothesis/
 .pytest_cache/
 
 # Environments
 .env
+<<<<<<< HEAD
+>>>>>>> 99c7096 (Initial commit: Incrementality Test Budget Calculator)
+=======
 >>>>>>> 99c7096 (Initial commit: Incrementality Test Budget Calculator)
 .venv
 env/
@@ -166,6 +185,7 @@ ENV/
 env.bak/
 venv.bak/
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 # Spyder project settings
 .spyderproject
@@ -229,6 +249,8 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 =======
+=======
+>>>>>>> 99c7096 (Initial commit: Incrementality Test Budget Calculator)
 # Streamlit
 .streamlit/
 *_cache.pkl
@@ -241,5 +263,9 @@ __marimo__/
 .idea/
 *.swp
 *.swo
+<<<<<<< HEAD
+*~
+>>>>>>> 99c7096 (Initial commit: Incrementality Test Budget Calculator)
+=======
 *~
 >>>>>>> 99c7096 (Initial commit: Incrementality Test Budget Calculator)

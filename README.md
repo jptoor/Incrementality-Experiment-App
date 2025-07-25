@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Incrementality-Experiment-App
 Estimate incrementality for different experiments
 
@@ -46,7 +47,3 @@ This app is designed to run on Streamlit Community Cloud. Simply connect to a Gi
 - Python 3.8+
 - Streamlit 1.28.0+
 - pandas, scipy, numpy
-
-## License
-
-MIT License - feel free to use and modify for your own incrementality testing needs.
