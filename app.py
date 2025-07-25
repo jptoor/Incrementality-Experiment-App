@@ -39,16 +39,12 @@ default_cpas = {
 
 monthly_spend = st.sidebar.number_input(
     f"Current {channel} Monthly Spend",
-    min_value=5000,
-    max_value=200000,
     value=30000,
     step=5000
 )
 
 total_signups = st.sidebar.number_input(
     "Total Forms per Month (All Channels)",
-    min_value=100,
-    max_value=20000,
     value=4000,
     step=100,
     help="Total form submissions across all marketing channels"
@@ -56,24 +52,20 @@ total_signups = st.sidebar.number_input(
 
 cpa = st.sidebar.number_input(
     f"Cost Per Form - {channel}",
-    min_value=50,
-    max_value=1000,
     value=default_cpas.get(channel, 200),
     step=50
 )
 
 duration = st.sidebar.slider(
     "Test Duration (weeks)",
-    min_value=4,
-    max_value=12,
+    min_value=2,
+    max_value=16,
     value=8,
     step=2
 )
 
 aql_rate = st.sidebar.slider(
     "Form → AQL Rate (%)",
-    min_value=10,
-    max_value=90,
     value=65,
     step=5,
     help="Percentage of form submissions that become Auto-Qualified Leads"
@@ -85,8 +77,6 @@ st.sidebar.markdown("*For context only - not used in calculations*")
 
 total_marketing_spend = st.sidebar.number_input(
     "Total Monthly Marketing Spend",
-    min_value=monthly_spend,
-    max_value=500000,
     value=max(50000, monthly_spend * 3),
     step=5000,
     help="Total spend across ALL marketing channels - helps understand channel interactions"
@@ -104,10 +94,10 @@ st.sidebar.header("Statistical Parameters")
 
 mde_input = st.sidebar.slider(
     "Minimum Detectable Lift (%)",
-    min_value=5,
+    min_value=1,
     max_value=30,
     value=15,
-    step=5,
+    step=1,
     help="""
     **What it means:** The smallest improvement you want to reliably detect.
     
@@ -121,8 +111,8 @@ mde_input = st.sidebar.slider(
 
 power_input = st.sidebar.slider(
     "Statistical Power (%)",
-    min_value=70,
-    max_value=95,
+    min_value=50,
+    max_value=100,
     value=80,
     step=5,
     help="""
@@ -164,8 +154,6 @@ enable_budget_cap = st.sidebar.checkbox(
 if enable_budget_cap:
     max_multiplier = st.sidebar.slider(
         "Maximum Spend Multiplier",
-        min_value=1.5,
-        max_value=20.0,
         value=5.0,
         step=0.5,
         help="Cap the spend multiplier at this level regardless of statistical requirements"
@@ -253,8 +241,8 @@ custom = calculate_budget(monthly_spend, cpa, mde_input, power_decimal, duration
 # Pre-defined scenarios for comparison
 scenarios = {
     'high': calculate_budget(monthly_spend, cpa, 10, 0.90, duration, 0.05, max_multiplier),  # 10% MDE, 90% power, 5% sig
-    'medium': calculate_budget(monthly_spend, cpa, 15, 0.80, duration, 0.05, max_multiplier), # 15% MDE, 80% power, 5% sig
-    'low': calculate_budget(monthly_spend, cpa, 20, 0.70, duration, 0.05, max_multiplier)    # 20% MDE, 70% power, 5% sig
+    'medium': calculate_budget(monthly_spend, cpa, 10, 0.80, duration, 0.05, max_multiplier), # 10% MDE, 80% power, 5% sig
+    'low': calculate_budget(monthly_spend, cpa, 15, 0.70, duration, 0.05, max_multiplier)    # 15% MDE, 70% power, 5% sig
 }
 
 # Display header
@@ -386,7 +374,7 @@ with col1:
 with col2:
     st.info("📊 **Medium Confidence**")
     st.markdown(f"""
-    **Settings:** 15% MDE • 80% Power • p<0.05
+    **Settings:** 10% MDE • 80% Power • p<0.05
     
     **Incremental Budget:** {med_inc}  
 
@@ -395,14 +383,14 @@ with col2:
     **Spend Multiplier:** {med_mult} normal
     
     📈 **Success Probability:** 30-60%  
-    🎯 **Detects:** 15%+ improvements  
+    🎯 **Detects:** 10%+ improvements  
     ⚠️ **Trade-off:** Moderate chance of inconclusive results
     """)
 
 with col3:
     st.info("📊 **Low Confidence**")
     st.markdown(f"""
-    **Settings:** 20% MDE • 70% Power • p<0.05
+    **Settings:** 15% MDE • 70% Power • p<0.05
     
     **Incremental Budget:** {low_inc}  
 
@@ -411,7 +399,7 @@ with col3:
     **Spend Multiplier:** {low_mult} normal
     
     📈 **Success Probability:** 0-30%  
-    🎯 **Detects:** Only 20%+ improvements  
+    🎯 **Detects:** Only 15%+ improvements  
     💰 **Advantage:** Lowest budget requirement
     """)
 
@@ -437,7 +425,7 @@ df = pd.DataFrame({
         f"{scenarios['medium']['multiplier']:.1f}x",
         f"{scenarios['low']['multiplier']:.1f}x"
     ],
-    "Min Detectable Lift": ["10%", "15%", "20%"]
+    "Min Detectable Lift": ["10%", "10%", "15%"]
 })
 
 st.table(df)
